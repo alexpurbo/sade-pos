@@ -17,7 +17,7 @@ class CreateMerchantsTable extends Migration
             $table->id('id_merchant');
 
             $table->unsignedBigInteger('id_user');
-            $table->foreign('id_user')->references('id_user')->on('Users');
+            $table->foreign('id_user')->references('id')->on('users');
             
             $table->string('merchant_name');
             $table->string('email');
