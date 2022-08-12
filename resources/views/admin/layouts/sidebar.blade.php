@@ -2,15 +2,15 @@
     <div class="sidebar-sticky pt-3">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" href="#">
+                <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/">
                     <span data-feather="home"></span>
                     Dashboard <span class="sr-only">(current)</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Request::is('pembelian*') ? 'active' : '' }}" href="/pembelian">
                     <span data-feather="file"></span>
-                    Orders
+                    Pembelian Stock
                 </a>
             </li>
             <li class="nav-item">
