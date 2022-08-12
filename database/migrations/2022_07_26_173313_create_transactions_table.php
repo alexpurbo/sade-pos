@@ -13,14 +13,14 @@ class CreateTransactionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('Transactions', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id('id_transaction');
             
             $table->unsignedBigInteger('id_merchant');
-            $table->foreign('id_merchant')->references('id_merchant')->on('Merchants');
+            $table->foreign('id_merchant')->references('id_merchant')->on('merchants');
             
             $table->unsignedBigInteger('id_product');
-            $table->foreign('id_product')->references('id_product')->on('Products');
+            $table->foreign('id_product')->references('id_product')->on('products');
             
             $table->string('date_transaction', 20);
             $table->char('type', 5);

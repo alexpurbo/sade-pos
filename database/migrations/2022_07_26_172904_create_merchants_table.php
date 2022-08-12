@@ -13,7 +13,7 @@ class CreateMerchantsTable extends Migration
      */
     public function up()
     {
-        Schema::create('Merchants', function (Blueprint $table) {
+        Schema::create('merchants', function (Blueprint $table) {
             $table->id('id_merchant');
 
             $table->unsignedBigInteger('id_user');

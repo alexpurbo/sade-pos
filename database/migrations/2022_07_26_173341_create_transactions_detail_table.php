@@ -13,11 +13,11 @@ class CreateTransactionsDetailTable extends Migration
      */
     public function up()
     {
-        Schema::create('Transactions_detail', function (Blueprint $table) {
+        Schema::create('transactions_detail', function (Blueprint $table) {
             $table->id('id_transaction_detail');
              
             $table->unsignedBigInteger('id_transaction');
-            $table->foreign('id_transaction')->references('id_transaction')->on('Transactions');
+            $table->foreign('id_transaction')->references('id_transaction')->on('transactions');
             
             $table->string('quantity');
             $table->string('price');
