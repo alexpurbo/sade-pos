@@ -1,17 +1,26 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    You're logged in!
+        <div class="container">
+            <div class="text-center mb-3 mt-3">
+                <h3>Pilih merchant anda : </> 
+            </div>
+            <div class="row merchant-div">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12  text-center merchant-button" >
+                    <button type="button" class="btn btn-primary btn-lg">Toko A</button>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12  text-center merchant-button" >
+                    <button type="button" class="btn btn-primary btn-lg">Toko B</button>
                 </div>
             </div>
+            <div class="add-merchant text-center">
+                Tambah Merchant 
+                <a href={{ route('addmerchant') }}>
+                    <button type="button"  class="btn btn-secondary"> tambah</button>
+                </a>
+            </div>
         </div>
-    </div>
+        
+    </x-slot>
+
+   
 </x-app-layout>

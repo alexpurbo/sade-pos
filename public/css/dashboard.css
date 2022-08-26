@@ -102,3 +102,13 @@ body {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
+
+.merchant-div {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn-lg {
+  padding : 2rem 3rem !important;
+  margin-bottom: 1rem;
+}
