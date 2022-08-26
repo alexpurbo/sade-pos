@@ -10,4 +10,6 @@ class Transaction extends Model
     use HasFactory;
 
     protected $guarded = ['id_transaction'];
+    protected $primaryKey = 'id_transaction';
+    public $timestamps = false;
 }

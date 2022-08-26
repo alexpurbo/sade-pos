@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Merchant extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'id_product';
-    public $timestamps = false;
-
-    protected $guarded = ['id_product'];
+    protected $primaryKey = 'id_merchant';
+    protected $guarded = ['id_merchant'];
 }

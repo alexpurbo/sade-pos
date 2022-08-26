@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\TransactionDetail;
 use Illuminate\Http\Request;
+use Darryldecode\Cart\Facades\CartFacade;
 
 class TransactionController extends Controller
 {
@@ -36,7 +38,22 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $cartItems = CartFacade::getContent();
+        $data = '';
+        foreach ($cartItems as $item) {
+            // dd($request);
+            $totalItem = $item['quantity'] * $item['price'];
+            $data = [
+                'id_transaction' => '1',
+                'id_product' => $item['id'],
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
+                'total' => $totalItem
+            ];
+
+            TransactionDetail::create($data);
+        }
     }
 
     /**
