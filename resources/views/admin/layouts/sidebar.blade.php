@@ -14,9 +14,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Request::is('stock-purchase*') ? 'active' : '' }}" href="/stock-purchase">
                     <span data-feather="shopping-cart"></span>
-                    Products
+                    Pembelian Stock Fix
                 </a>
             </li>
             <li class="nav-item">

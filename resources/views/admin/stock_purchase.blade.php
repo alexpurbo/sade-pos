@@ -1,8 +1,9 @@
 @extends('admin.layouts.main')
 
 @section('container')
+
 <div class="mt-3 mb-3">
-    <h1>Halaman Transaksi Admin sade-pos</h1>
+    <h1>Pembelian Stock</h1>
 </div>
 
 <div class="row mb-3">
@@ -19,6 +20,8 @@
                         <div class="form-group col-md-7">
                             <label for="inputPassword4">Nama Produk</label>
                             <input type="text" class="form-control" id="product_name" name="product_name">
+                            <input type="hidden" id="purchase_id" name="purchase_id">
+                            <!-- <input type="text" id="stock_id" name="stock_id"> -->
                         </div>
                     </div>
                     <div class="form-row">
@@ -36,7 +39,7 @@
                         </div>
                         <div class="form-group col-md-3">
                             <!-- <label for="inputPassword4">Status</label> -->
-                            <input type="hidden" class="form-control" id="status" name="status" readonly>
+                            <input type="hidden" class="form-control" id="sp_status" name="sp_status" readonly>
                         </div>
                     </div>
                 </form>
@@ -53,7 +56,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <table class="table table-bordered table-striped" id="tblShopCart">
+                <table class="table table-bordered table-striped" id="tblStockPurchase">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -61,15 +64,16 @@
                             <th scope="col">Jumlah</th>
                             <th scope="col">Harga</th>
                             <th scope="col">Total</th>
+                            <th style="display:none;"></th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="tblPurchaseList">
+                    <tbody id="tblBodyStockPurchase">
 
                     </tbody>
                 </table>
 
-                <div class="float-right">
+                <!-- <div class="float-right mt-3">
                     <div class="form-row align-items-center">
                         <div class="col-auto">
                             <label for="staticEmail">Total</label>
@@ -84,7 +88,7 @@
                             <button class="btn btn-primary" id="btnSimpan" name="btnSimpan">Simpan</button>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
             </div>
 
@@ -93,8 +97,12 @@
 </div>
 
 <script type="text/javascript">
+    var tblDataStockPurchase = '';
+    let stockId = '';
     $(document).ready(function() {
-        setTablePurchaseCart();
+
+        setTblStockPurchase();
+
         $("#product_name").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -121,13 +129,18 @@
 
         $('#product_amount').on('keypress', function(e) {
             // console.log('keypress amount= ' + e.which);
-            let amount = $('#product_amount').val();
+            var amount = $('#product_amount').val();
             if (e.which == 13 || e.which == 9) {
-                if (amount > 0) {
-                    $('#product_price').focus();
-                } else {
-                    alert('Jumlah minimal 1');
+                console.log('amount ' + amount + ' amount')
+                if (amount <= 0 || amount == "") {
+                    $('#product_amount').val('1');
+                    amount = 1;
                 }
+                // let price = $('#product_price').val();
+                // let total = amount * price;
+
+                // $('#total_price').val(total);
+                $('#product_price').focus();
             }
         });
 
@@ -147,60 +160,42 @@
             }
         });
 
-        $('#tblPurchaseList').on('click', 'button.btnEditItem', function() {
-            let editId = $(this).attr('id');
-            console.log(editId);
-            $.ajax({
-                // type: "POST",
-                url: "{{ url('/cart') }}",
-                dataType: "json",
-                success: function(data) {
-                    // console.log(data[editId].name);
-                    $('#product_name').val(data[editId].name);
-                    $('#product_id').val(data[editId].id);
-                    $('#product_price').val(data[editId].price);
-                    $('#product_amount').val(data[editId].quantity);
-                    let total = data[editId].price * data[editId].quantity;
-                    $('#total_price').val(total);
-                    $('#status').val('edit');
-                    $('#product_amount').focus();
-                    window.scrollTo(0, 0);
-                }
-            });
-        });
+        $('#tblStockPurchase').on('click', 'button.btnEditPurchase', function() {
+            let purchase_id = $(this).attr('id');
+            var currentRow = $(this).closest("tr");
+            var prod_id = currentRow.find("td:eq(5)").text();
+            var price = currentRow.find("td:eq(3)").text(); // get current row 2nd TD
+            var qty = currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+            var name = currentRow.find("td:eq(1)").text();
+            var total = currentRow.find("td:eq(4)").text();
 
-        $('#tblPurchaseList').on('click', 'button.btnHapusItem', function() {
-            let deleteId = $(this).attr('id');
-            if (confirm("Apakah anda yakin akan menghapus data?") == true) {
-                console.log('setuju ' + deleteId);
-                $.ajax({
-                    url: "{{ url('/') }}/remove",
-                    data: {
-                        id: deleteId
-                    },
-                    success: function(data) {
-                        console.log('sukses dihapus');
-                        setTablePurchaseCart();
-                    }
-                });
-            } else {
-                console.log('batal ' + deleteId);
-            }
-        });
-
-        $('#btnSimpan').on('click', function(e) {
             $.ajax({
-                type: "POST",
-                url: "{{url('/')}}/pembelian",
+                url: "{{url('/')}}/cekEditPurchase",
                 data: {
                     _token: '{{ csrf_token() }}',
-                    //     id: '2',
-                    //     quantity: 3,
-                    //     price: 4000
+                    prod_id: prod_id,
+                    price: price,
+                    qty: qty
                 },
+                dataType: "json",
                 success: function(data) {
-                    console.log('data tersimpan');
+                    console.log(data);
+                    if (data.length > 0) {
+                        $('#product_id').val(prod_id);
+                        $('#product_name').val(name);
+                        $('#product_price').val(price);
+                        $('#product_amount').val(qty);
+                        $('#total_price').val(total);
+                        $('#sp_status').val('edit');
+                        $('#purchase_id').val(purchase_id);
+                        // $('#stock_id').val(data[0].id_stock);
+                        stockId = data[0].id_stock;
+                        window.scrollTo(0, 0);
+                    } else {
+                        alert('Data sudah tidak dapat dikoreksi');
+                    }
                 }
+
             });
 
         });
@@ -210,7 +205,7 @@
     function getProductIdByName() {
         let prod_name = $('#product_name').val();
         $.ajax({
-            url: "{{url('/')}}/getProductIdByName",
+            url: "{{url('/')}}/getProductDataByName",
             data: {
                 term: prod_name
             },
@@ -220,6 +215,7 @@
                 console.log(data.length);
                 if (data.length > 0) {
                     $('#product_id').val(data[0].id_product);
+                    // $('#product_price').val(data[0].price);
                     $('#product_amount').focus();
                 } else {
                     alert('Produk tidak ditemukan');
@@ -232,21 +228,26 @@
     function addPurchaseItem() {
         let prod_id = $('#product_id').val();
         let prod_name = $('#product_name').val();
-        let prod_qty = $('#product_amount').val();
-        let prod_price = $('#product_price').val();
-        let status = $('#status').val();
+        let qty = $('#product_amount').val();
+        let price = $('#product_price').val();
+        let total = $('#total_price').val();
+        let status = $('#sp_status').val();
+        let purchase_id = $('#purchase_id').val();
         // console.log(prod_name);
         if (status == 'edit') {
-            console.log('edit');
+            console.log(status);
             $.ajax({
-                type: "POST",
-                url: "{{ url('/update-cart') }}",
+                type: "PATCH",
+                url: "{{ url('/stock-purchase') }}/"+purchase_id,
 
                 data: {
                     _token: '{{ csrf_token() }}',
-                    id: prod_id,
-                    price: prod_price,
-                    quantity: prod_qty,
+                    prod_id: prod_id,
+                    price: price,
+                    qty: qty,
+                    total: total,
+                    purchase_id: purchase_id,
+                    stockId: stockId,
                 },
                 success: function(data) {
                     console.log(data);
@@ -256,25 +257,70 @@
                 }
             });
         } else {
-            console.log('tambah');
+            console.log(status);
             $.ajax({
                 type: "POST",
-                url: "{{ url('/addToCart') }}",
+                url: "{{ url('/stock-purchase') }}",
                 data: {
                     _token: '{{ csrf_token() }}',
-                    id: prod_id,
-                    name: prod_name,
-                    price: prod_price,
-                    quantity: prod_qty,
+                    prod_id: prod_id,
+                    price: price,
+                    qty: qty,
+                    total: total
                 },
                 success: function(data) {
                     console.log(data);
                     console.log('berhasil ditambah');
                     clearInputText();
+                    $('#product_name').focus();
                 }
             });
         }
-        setTablePurchaseCart();
+        setTblStockPurchase();
+    }
+
+    function setTblStockPurchase() {
+        $.ajax({
+            url: "{{ url('/getStockPurchaseList') }}",
+            success: function(data) {
+                console.log(data);
+                var html = "";
+                for (var i = 0; i < data.length; i++) {
+                    // var tgl = data[i].report_date;
+                    // var tglArr = tgl.split('-');
+                    // var tglFix = tglArr[2] + '-' + tglArr[1] + '-' + tglArr[0];
+                    var nomor = i + 1;
+                    html += '<tr>';
+                    html += '<td class="table_data" data-row_id="' +
+                        data[i].id + '">' + nomor +
+                        '</td>';
+                    html += '<td class="table_data" data-row_id="' +
+                        data[i].id + '">' + data[i].product_name +
+                        '</td>';
+                    html += '<td class="table_data" data-row_id="' +
+                        data[i].id + '">' + data[i].quantity +
+                        '</td>';
+                    html += '<td class="table_data" data-row_id="' +
+                        data[i].id + '">' + data[i].purchase_price +
+                        '</td>';
+                    html += '<td class="table_data" data-row_id="' +
+                        data[i].id + '">' + data[i].total +
+                        '</td>';
+                    html += '<td class="table_data" data-row_id="' +
+                        data[i].id + ' " style="display:none;">' + data[i].id_product +
+                        '</td>';
+                    html += '<td class="table_data" data-row_id="' +
+                        data[i].id + '"><button type="submit" class="btn btn-warning btnEditPurchase" id="' + data[i].id + '">Edit</button>' +
+                        ' <button type="submit" class="btn btn-danger hapusNilai" id="' + data[i].id + '">Hapus</button></td></tr>';
+                }
+
+                if (tblDataStockPurchase) {
+                    tblDataStockPurchase.destroy();
+                }
+                $('#tblBodyStockPurchase').html(html);
+                tblDataStockPurchase = $('#tblStockPurchase').DataTable();
+            }
+        });
     }
 
     function clearInputText() {
@@ -286,24 +332,6 @@
         $('#status').val('');
         $('#product_name').focus();
     }
-
-    function cancelledToCart() {
-        clearInputText();
-        $('#product_name').focus();
-    }
-
-    function setTablePurchaseCart() {
-        $.ajax({
-            url: "{{ url('/cartTable') }}",
-            // dataType: "json",
-            success: function(data) {
-                // console.log(data);
-                var html = data;
-                $('#tblPurchaseList').html(html);
-            }
-        });
-    }
 </script>
-
 
 @endsection

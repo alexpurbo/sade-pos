@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\StockPurchaseController;
 use App\Http\Controllers\TransactionController;
 
 /*
@@ -16,8 +17,8 @@ use App\Http\Controllers\TransactionController;
 */
 
 
-Route::group(['middleware' => 'auth'], function() {
-    
+Route::group(['middleware' => 'auth'], function () {
+
     Route::get('/', function () {
         return view('admin.home.index');
     });
@@ -34,7 +35,7 @@ Route::group(['middleware' => 'auth'], function() {
         return view('addmerchant');
     })->name('addmerchant');
     Route::resource('/pembelian', TransactionController::class);
-    
+
     Route::get('cart', [CartController::class, 'cartList'])->name('cart.list');
     Route::post('addToCart', [CartController::class, 'addToCart'])->name('cart.store');
     Route::post('update-cart', [CartController::class, 'updateCart'])->name('cart.update');
@@ -43,11 +44,20 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('cartTable', [CartController::class, 'cartTable']);
     Route::get('cekCart', [CartController::class, 'cekCart']);
 
+    Route::resource('/stock-purchase', StockPurchaseController::class);
+
+    Route::get('getProductDataByName', [StockPurchaseController::class, 'getProductDataByName']);
+
+    Route::get('/getStockPurchaseList', [StockPurchaseController::class, 'getStockPurchaseList']);
+
+    Route::get('/cekEditPurchase', [StockPurchaseController::class, 'cekEditPurchase']);
 });
 
 
 Route::get('autocomplete', [TransactionController::class, 'autocomplete'])->name('autocomplete');
 Route::get('getProductIdByName', [TransactionController::class, 'getProductIdByName']);
+
+
 
 require __DIR__ . '/auth.php';
 

@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,33 +24,38 @@ class DatabaseSeeder extends Seeder
 
         Product::create([
             'product_name' => 'Rinso 500gr',
-            'unit' => 'pcs'
+            'unit' => 'pcs',
+            'price' => '5000'
         ]);
 
         Product::create([
             'product_name' => 'Molto 125gr',
-            'unit' => 'pcs'
+            'unit' => 'pcs',
+            'price' => '1000'
         ]);
 
         Product::create([
             'product_name' => 'Nuvo Batang 190gr',
-            'unit' => 'pcs'
+            'unit' => 'pcs',
+            'price' => '1700'
         ]);
 
         Product::create([
             'product_name' => 'Minyak Bimoli 2L',
-            'unit' => 'pcs'
+            'unit' => 'pcs',
+            'price' => '29000'
         ]);
 
         Product::create([
             'product_name' => 'Minyak Sunco 2L',
-            'unit' => 'pcs'
+            'unit' => 'pcs',
+            'price' => '31000'
         ]);
 
         User::create([
             'name' => 'alex purbo',
             'email' => 'alex@mail.com',
-            'password' => md5('pswdalex'),
+            'password' => Hash::make('pswdalex'),
         ]);
 
         Merchant::create([
